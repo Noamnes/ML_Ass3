@@ -11,20 +11,6 @@ type_num_dic = {"Iris-virginica": VIRGINICA,
                 "Iris-versicolor": VERSICOLOR}
 
 
-def split_array_randomly(arr):
-    # Shuffle the list randomly
-    random.shuffle(arr)
-
-    # Calculate the middle index to split the array in two
-    mid = len(arr) // 2
-
-    # Split the array into two halves
-    arr1 = arr[:mid]
-    arr2 = arr[mid:]
-
-    return arr1, arr2
-
-
 class Point:
     def __init__(self, x, y, t):
         self.x = x
@@ -78,7 +64,7 @@ def process_file(file_path):
 
 
 class Node:
-    def __init__(self, points,is_root,max_level=0):
+    def __init__(self, points, is_root, max_level=0):
         self.points = points
         self.left = None
         self.right = None
@@ -125,8 +111,8 @@ class Node:
         else:
             raise ValueError("Invalid feature for splitting.")
 
-        self.left = Node(left_points,False)
-        self.right = Node(right_points,False)
+        self.left = Node(left_points, False)
+        self.right = Node(right_points, False)
         self.split_feature = feature
         self.split_value = value
 
@@ -135,7 +121,7 @@ class DecisionTree:
     def __init__(self, points, max_level):
         self.points = points
         self.max_level = max_level
-        self.root = Node(points,True, max_level=max_level)
+        self.root = Node(points, True, max_level=max_level)
 
     def test_tree(self, tree, test_set):
         misclassified = 0
@@ -278,45 +264,36 @@ def question_2():
 
     # Step 1: Process the file and load the points
     data = process_file(file_path)
-    train_set, test_set = split_array_randomly(type_arrays.get("all"))
+    all_p = type_arrays.get("all")
 
     # Step 2: Initialize parameters
     max_levels = 2  # k = 3, tree with root, children, and leaf grandchildren (levels 0,1,2)
 
     # Step 3: Create DecisionTree objects for brute force
     print("\n--- Brute Force Tree Construction (Strategy A) ---")
-    brute_tree = DecisionTree(train_set, max_levels)
+    brute_tree = DecisionTree(all_p, max_levels)
     best_tree, brute_error_count = brute_tree.brute_force()
-    brute_error_train = brute_error_count/len(train_set)
-    print(f"Brute force error on training set: {brute_error_count}")
+    brute_error = brute_error_count / len(all_p)
+    print(f"Brute force error count: {brute_error_count}")
     print("Brute Force Tree:")
     brute_tree.draw_tree(best_tree)
 
-    # Test the tree on the test set
-    test_error_brute = brute_tree.test_tree(best_tree, test_set)
-    print(f"Brute Force Tree error on test set: {test_error_brute}")
-
     # Step 4: Create DecisionTree objects for binary entropy
-    k = max_levels # 3-level tree
+    k = max_levels  # 3-level tree
     print("\n--- Binary Entropy Tree Construction (Strategy B) --\n")
-    entropy_tree = DecisionTree(train_set, k)
+    entropy_tree = DecisionTree(all_p, k)
     best_entropy_tree = entropy_tree.binary_entropy()
     entropy_error_count = entropy_tree.calculate_tree_error(entropy_tree.root)
-    print(f"Binary entropy error on training set: {entropy_error_count}")
-    entropy_error_train = entropy_error_count/len(train_set)
+    print(f"Binary entropy error count: {entropy_error_count}")
+    entropy_error = entropy_error_count / len(all_p)
     print("Binary Entropy Tree:")
-    entropy_tree.draw_tree(entropy_tree.root)
+    entropy_tree.draw_tree(best_entropy_tree)
 
-    # Test the tree on the test set
-    test_error_entropy = entropy_tree.test_tree(entropy_tree.root, test_set)
-    print(f"Binary Entropy Tree error on test set: {test_error_entropy}")
 
     # Step 5: Compare errors
     print("\n--- Comparison ---")
-    print(f"Error using BRUTE FORCE on TRAIN set: {brute_error_train}")
-    print(f"Error using binary ENTROPY on TRAIN set: {entropy_error_train}")
-    print(f"Error using BRUTE FORCE on TEST set: {test_error_brute}")
-    print(f"Error using binary ENTROPY on TEST set: {test_error_entropy}")
+    print(f"Error using BRUTE FORCE: {brute_error}")
+    print(f"Error using binary ENTROPY: {entropy_error}")
 
 
 if __name__ == "__main__":
