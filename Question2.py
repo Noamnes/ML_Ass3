@@ -244,14 +244,14 @@ class DecisionTree:
         # Visualize the tree structure with graphical approach and side indicators
         if node.is_leaf():
             # Display leaf node with its label and error
-            print(f"{prefix}{side} └── Leaf: Label = {node.label}, Error = {node.calculate_error()}")
+            print(f"{prefix}{side} └── Leaf: Label = {node.label}")
         else:
             # Display split condition with a branch and indicate whether it's the left or right branch
             print(f"{prefix}{side} ├── Split on '{node.split_feature}' <= {node.split_value}")
 
             # Recursively display the left subtree with "Left branch" label
             left_prefix = prefix + "│   "
-            self.draw_tree(node.left, depth + 1, left_prefix, "Left branch")
+            self.draw_tree(node.left, depth + 1, left_prefix, "Left branch ")
 
             # Recursively display the right subtree with "Right branch" label
             right_prefix = prefix + "    "
